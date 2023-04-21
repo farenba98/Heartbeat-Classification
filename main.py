@@ -1,13 +1,24 @@
-import numpy as np 
+import numpy as np
 import matplotlib.pyplot as plt
+import wfdb
 
-# create a numpy array with some data
-x = np.linspace(-np.pi, np.pi, 100)
-y = np.sin(x)
+# Set the path to the directory that contains the record files
+path = '/home/faren/Documents/Heartbeat Classification/Dataset/mit-bih-arrhythmia-database-1.0.0';
 
-# create a plot using matplotlib
-plt.plot(x, y)
-plt.title("A Sine Wave")
-plt.xlabel("x")
-plt.ylabel("y")
-plt.show()
+# Set the name of the record file (without the extension)
+record_name = '100'
+
+# Construct the absolute file path to the record file
+file_path = f"{path}/{record_name}"
+
+# Read the record using the 'rdrecord' function
+record = wfdb.rdrecord(file_path)
+
+# Access the signal data from the record object
+signal = record.p_signal
+
+# Access the metadata from the record object
+metadata = record.__dict__
+
+# Print the metadata of the record
+print(metadata)
