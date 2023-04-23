@@ -2,23 +2,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 import wfdb
 
-# Set the path to the directory that contains the record files
-path = '/home/faren/Documents/Heartbeat Classification/Dataset/mit-bih-arrhythmia-database-1.0.0';
-
-# Set the name of the record file (without the extension)
+path = '/home/faren/Documents/HB/Dataset/mit-bih-arrhythmia-database-1.0.0'
 record_name = '100'
-
-# Construct the absolute file path to the record file
 file_path = f"{path}/{record_name}"
 
-# Read the record using the 'rdrecord' function
 record = wfdb.rdrecord(file_path)
+signal = record.p_signal[:, record.sig_name.index('MLII')]
+ann = wfdb.rdann(file_path, 'atr')
+ann_samples = ann.sample
+ann_symbols = ann.symbol
 
-# Access the signal data from the record object
-signal = record.p_signal
-
-# Access the metadata from the record object
-metadata = record.__dict__
-
-# Print the metadata of the record
-print(metadata)
+# wfdb.plot_items(signal=signal, ann_samp=[ann_samples], ann_sym=[ann_symbols])
+# plt.show()
