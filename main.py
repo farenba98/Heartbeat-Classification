@@ -11,10 +11,8 @@ path = '/home/faren/Documents/HB/Dataset/mit-bih-arrhythmia-database-1.0.0'
 
 for file in glob.iglob(path + '/*.dat'):
     record_name = file.rpartition('/')[-1].split('.')[0]
-    print(record_name)
     file_path = f"{path}/{record_name}"
     record = wfdb.rdrecord(file_path)
-
     if not lead in record.sig_name:
         continue 
     signal = record.p_signal[:, record.sig_name.index(lead)]
