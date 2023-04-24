@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 import os
 import glob
 import h5py
@@ -7,9 +8,10 @@ import wfdb
 class Recording:
     def __init__(self, file, lead):
         self.file = file
-        self.record_name = file.rpartition('/')[-1].split('.')[0]
+        self.lead = lead
+        self.name = file.rpartition('/')[-1].split('.')[0]
         self.path = file.rpartition('/')[0]
-        self.file_path = f"{self.path}/{self.record_name}"
+        self.file_path = f"{self.path}/{self.name}"
 
         self.record = wfdb.rdrecord(self.file_path)
         if not lead in self.record.sig_name:
@@ -19,6 +21,9 @@ class Recording:
         self.ann_samples = self.ann.sample
         self.ann_symbols = self.ann.symbol
         self.beats = []
+
+    def illustrate(self):
+        wfdb.plot_items(signal = self.signal, ann_samp = [self.ann_samples], ann_sym = [self.ann_symbols])
     
     def segment_beats(self, seg_len=300):
         for i, peak in enumerate(self.ann_samples):
