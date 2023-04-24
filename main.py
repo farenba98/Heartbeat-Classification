@@ -1,6 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import wfdb
+import h5py
+import glob
 
 path = '/home/faren/Documents/HB/Dataset/mit-bih-arrhythmia-database-1.0.0'
 record_name = '100'
@@ -18,13 +20,21 @@ ann_symbols = ann.symbol
 segmented_beats = []
 seg_len = 300
 
+
 for i, peak in enumerate(ann_samples):
     beat_type = ann_symbols[i]
     if peak > 150 and beat_type in ["N", "S", "V", "F", "Q"]:
         segment = signal[int(peak-seg_len/2):int(peak+seg_len/2)]
         # Append segment and corresponding type to segmented_beats
-        segmented_beats.append((segment, beat_type))
+        dest_path = '/home/faren/Documents/HB/Beats/' + record_name + '/' + str(i) + '_' + str(beat_type) + '.h5'
+        with h5py.File(dest_path, 'w') as hf:
+            hf.create_dataset('signal',  data=segment)
+            # hf.create_dataset('label', data=beat_type)
 
-first_segment, first_label = segmented_beats[0]
-print("Signal segment:", first_segment)
-print("Label:", first_label)
+dest_path = '/home/faren/Documents/HB/Beats/' + record_name + '/'
+for file in glob.iglob(dest_path + '*.h5'):
+    with h5py.File(file, 'r') as hf:
+        data = np.array(hf['signal'][:])
+        label = file.split("_")[1].split(".")[0]
+        if label != 'N':
+            print(label)
