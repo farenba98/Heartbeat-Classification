@@ -13,6 +13,3 @@ for file in glob.iglob(path + '/*.dat'):
         record.segment_beats(seg_len=seg_len)
         record.save_beats(dest + record.name)
         record.load_beats(dest + record.name)
-
-# What is R?
-# check sampling rate

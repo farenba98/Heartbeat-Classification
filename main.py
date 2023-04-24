@@ -1,9 +1,6 @@
-import numpy as np
 import matplotlib.pyplot as plt
 import wfdb
-import h5py
 import glob
-import os
 
 seg_len = 300
 lead = 'MLII'

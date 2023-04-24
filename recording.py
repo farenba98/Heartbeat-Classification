@@ -1,5 +1,4 @@
 import numpy as np
-import matplotlib.pyplot as plt
 import os
 import glob
 import h5py
@@ -21,9 +20,6 @@ class Recording:
         self.ann_samples = self.ann.sample
         self.ann_symbols = self.ann.symbol
         self.beats = []
-
-    def illustrate(self):
-        wfdb.plot_items(signal = self.signal, ann_samp = [self.ann_samples], ann_sym = [self.ann_symbols])
     
     def segment_beats(self, seg_len=300):
         for i, peak in enumerate(self.ann_samples):
