@@ -8,7 +8,7 @@ dest = '/home/faren/Documents/HB/Beats/'
 seg_len = 300
 lead = 'MLII'
 
-file = path + '/233*.dat'
+file = path + '/233.dat'
 record = Recording(file, lead)
 if hasattr(record, 'signal'):
     wfdb.plot_items(signal = record.signal, ann_samp = [record.ann_samples], ann_sym = [record.ann_symbols])
