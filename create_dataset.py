@@ -8,7 +8,8 @@ lead = 'MLII'
 
 for file in glob.iglob(path + '/*.dat'):
     record = Recording(file, lead)
-    if hasattr(record, 'signal'):    
+    if hasattr(record, 'signal'):
+        print(record.record_name)
         record.segment_beats(seg_len=seg_len)
         record.save_beats('/home/faren/Documents/HB/Beats/' + record.record_name)
         record.load_beats('/home/faren/Documents/HB/Beats/' + record.record_name)
