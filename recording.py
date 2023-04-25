@@ -5,32 +5,36 @@ import h5py
 import wfdb
 
 class Recording:
-    def __init__(self, file, lead):
-        self.file = file
-        self.lead = lead
-        self.name = file.rpartition('/')[-1].split('.')[0]
-        self.path = file.rpartition('/')[0]
-        self.file_path = f"{self.path}/{self.name}"
-
-        self.record = wfdb.rdrecord(self.file_path)
-        if not lead in self.record.sig_name:
-            return None
-        self.signal = self.record.p_signal[:, self.record.sig_name.index(lead)]
-        self.ann = wfdb.rdann(self.file_path, 'atr')
-        self.ann_samples = self.ann.sample
-        self.ann_symbols = self.ann.symbol
+    def __init__(self, name = ''):
+        self.name = name
+        self.signal = []
+        self.ann_samples = []
+        self.ann_symbols = []
         self.beats = []
-    
-    def segment_beats(self, seg_len=300):
+
+    def read_data(self, file, lead):
+        self.name = file.rpartition('/')[-1].split('.')[0]
+        path = file.rpartition('/')[0]
+        file_path = f"{path}/{self.name}"
+        record = wfdb.rdrecord(file_path)
+        if not lead in record.sig_name:
+            return None
+        self.signal = record.p_signal[:, record.sig_name.index(lead)]
+        ann = wfdb.rdann(file_path, 'atr')
+        self.ann_samples = ann.sample
+        self.ann_symbols = ann.symbol
+
+
+    def segment_beats(self, seg_len = 300, beat_types):
         for i, peak in enumerate(self.ann_samples):
             beat_type = self.ann_symbols[i]
-            if peak > 150 and beat_type in ["N", "S", "V", "F", "Q"]:
+            if peak > seg_len/2 and beat_type in beat_types:
                 segment = self.signal[int(peak-seg_len/2):int(peak+seg_len/2)]
                 beat = {'type': beat_type, 'segment': segment}
                 self.beats.append(beat)
     
     def save_beats(self, dest_path):
-        os.makedirs(dest_path, exist_ok=True)
+        os.makedirs(dest_path, exist_ok = True)
         for i, beat in enumerate(self.beats):
             beat_type = beat['type']
             segment = beat['segment']
