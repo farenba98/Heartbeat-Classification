@@ -25,10 +25,10 @@ class Recording:
         self.ann_symbols = ann.symbol
 
 
-    def segment_beats(self, seg_len = 300, beat_types):
+    def segment_beats(self, beat_types = [], seg_len = 300):
         for i, peak in enumerate(self.ann_samples):
             beat_type = self.ann_symbols[i]
-            if peak > seg_len/2 and beat_type in beat_types:
+            if peak > seg_len/2 and (beat_type in beat_types or beat_types == []):
                 segment = self.signal[int(peak-seg_len/2):int(peak+seg_len/2)]
                 beat = {'type': beat_type, 'segment': segment}
                 self.beats.append(beat)
@@ -48,5 +48,5 @@ class Recording:
             with h5py.File(file, 'r') as hf:
                 segment = np.array(hf['signal'])
                 beat_type = os.path.splitext(os.path.basename(file))[0].split('_')[-1]
-                beat = {'type': beat_type, 'segment': segment}
+                beat = {'type': beat_type, 'signal': segment}
                 self.beats.append(beat)
