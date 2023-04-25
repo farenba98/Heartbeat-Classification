@@ -11,5 +11,5 @@ record.load_beats(dest + record.name)
 
 print(record.beats[0]['type'])
 
-plt.plot(record.beats[500]['signal'])
+plt.plot(record.beats[702]['signal'])
 plt.show()
