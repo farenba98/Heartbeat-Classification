@@ -28,7 +28,7 @@ class Recording:
     def segment_beats(self, beat_types = [], seg_len = 300):
         for i, peak in enumerate(self.ann_samples):
             beat_type = self.ann_symbols[i]
-            if peak > seg_len/2 and (beat_type in beat_types or beat_types == []):
+            if peak > seg_len/2 and peak + seg_len/2 < len(self.signal) and (beat_type in beat_types or beat_types == []):
                 segment = self.signal[int(peak-seg_len/2):int(peak+seg_len/2)]
                 beat = {'type': beat_type, 'segment': segment}
                 self.beats.append(beat)
