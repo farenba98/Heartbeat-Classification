@@ -12,7 +12,7 @@ valid_labels= ["N", "S", "V", "F", "Q"]
 for file in glob.iglob(path + '/*.dat'):
     record = Recording()
     record.read_data(file, lead)
-    if hasattr(record, 'signal'):
+    if len(record.signal):
         record.segment_beats(beat_types = valid_labels, seg_len = seg_len)
         if not os.path.exists(dest + record.name):
             os.mkdir(dest + record.name)
