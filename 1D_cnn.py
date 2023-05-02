@@ -8,6 +8,10 @@ from recording import Recording
 import os
 import numpy as np
 import datetime
+from sklearn.metrics import confusion_matrix
+import itertools
+import matplotlib.pyplot as plt
+
 
 dest = '/home/faren/Documents/HB/Beats/'
 
@@ -75,10 +79,9 @@ model.compile(optimizer=adam, loss='categorical_crossentropy', metrics=['accurac
 log_dir = "logs/fit/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
 tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
 
-
 model.fit(x=X_train, 
           y=y_train, 
-          epochs=50, 
+          epochs=20, 
           batch_size=64,
           validation_data=(X_test, y_test), 
           callbacks=[tensorboard_callback])
