@@ -8,9 +8,9 @@ from recording import Recording
 import os
 import numpy as np
 import datetime
-from sklearn.metrics import confusion_matrix
 import itertools
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 
 dest = '/home/faren/Documents/HB/Beats/'
@@ -26,15 +26,17 @@ data_list = []
 label_list = []
 valid_labels= ["N", "S", "V", "F", "Q"]
 
-for record_name in os.listdir(dest):
-    record = Recording(record_name)
-    record.load_beats(dest + record.name)
-    beats = record.beats
-    for beat_num in range(0, len(beats)):
-        label = beats[beat_num]['type']
-        data = beats[beat_num]['signal']
-        data_list.append(data.reshape((300, 1)))
-        label_list.append(valid_labels.index(label))
+# for record_name in os.listdir(dest):
+record_name = '117'
+
+record = Recording(record_name)
+record.load_beats(dest + record.name)
+beats = record.beats
+for beat_num in range(0, len(beats)):
+    label = beats[beat_num]['type']
+    data = beats[beat_num]['signal']
+    data_list.append(data.reshape((300, 1)))
+    label_list.append(valid_labels.index(label))
 
 X = np.array(data_list)
 y = np.array(label_list)
@@ -81,10 +83,23 @@ tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram
 
 model.fit(x=X_train, 
           y=y_train, 
-          epochs=20, 
+          epochs=1, # change to 20
           batch_size=64,
           validation_data=(X_test, y_test), 
           callbacks=[tensorboard_callback])
 
 test_loss, test_acc = model.evaluate(X_test, y_test, batch_size=256)
 print('Test accuracy:', test_acc)
+
+y_pred = model.predict(X_test)
+y_pred = np.argmax(y_pred, axis=1)
+
+# Calculate the confusion matrix
+cm = tf.math.confusion_matrix(np.argmax(y_test, axis=1), y_pred)
+
+# Plot the confusion matrix
+plt.figure(figsize=(8, 6))
+sns.heatmap(cm, annot=True, fmt='g', cmap='Blues')
+plt.xlabel('Predicted labels')
+plt.ylabel('True labels')
+plt.show()
