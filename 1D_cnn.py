@@ -12,6 +12,8 @@ import itertools
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+valid_labels= ["N", "V", "F"]
+
 
 dest = '/home/faren/Documents/HB/Beats/'
 
@@ -24,10 +26,8 @@ fix_gpu()
 
 data_list = []
 label_list = []
-valid_labels= ["N", "n", "E", "F", "Q"]
 
 for record_name in os.listdir(dest):
-# record_name = '117'
 
     record = Recording(record_name)
     record.load_beats(dest + record.name)
@@ -83,7 +83,7 @@ tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram
 
 model.fit(x=X_train, 
           y=y_train, 
-          epochs=1, # change to 20
+          epochs=20, # change to 20
           batch_size=256,
           validation_data=(X_test, y_test), 
           callbacks=[tensorboard_callback])
@@ -102,9 +102,8 @@ plt.figure(figsize=(8, 6))
 sns.heatmap(cm_train, annot=True, fmt='g', cmap='Blues')
 plt.xlabel('Predicted labels')
 plt.ylabel('True labels')
+plt.title('CM for Train Data')
 plt.show()
-
-
 
 print('Test accuracy:', test_acc)
 
@@ -119,4 +118,5 @@ plt.figure(figsize=(8, 6))
 sns.heatmap(cm, annot=True, fmt='g', cmap='Blues')
 plt.xlabel('Predicted labels')
 plt.ylabel('True labels')
+plt.title('CM for Test Data')
 plt.show()
