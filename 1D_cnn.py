@@ -24,19 +24,19 @@ fix_gpu()
 
 data_list = []
 label_list = []
-valid_labels= ["N", "S", "V", "F", "Q"]
+valid_labels= ["N", "n", "E", "F", "Q"]
 
-# for record_name in os.listdir(dest):
-record_name = '117'
+for record_name in os.listdir(dest):
+# record_name = '117'
 
-record = Recording(record_name)
-record.load_beats(dest + record.name)
-beats = record.beats
-for beat_num in range(0, len(beats)):
-    label = beats[beat_num]['type']
-    data = beats[beat_num]['signal']
-    data_list.append(data.reshape((300, 1)))
-    label_list.append(valid_labels.index(label))
+    record = Recording(record_name)
+    record.load_beats(dest + record.name)
+    beats = record.beats
+    for beat_num in range(0, len(beats)):
+        label = beats[beat_num]['type']
+        data = beats[beat_num]['signal']
+        data_list.append(data.reshape((300, 1)))
+        label_list.append(valid_labels.index(label))
 
 X = np.array(data_list)
 y = np.array(label_list)
@@ -46,7 +46,7 @@ shuffle_index = np.random.permutation(len(X))
 X = X[shuffle_index]
 y = y[shuffle_index]
 
-split_index = int(0.8 * len(X))
+split_index = int(0.9 * len(X))
 X_train, X_test = X[:split_index], X[split_index:]
 y_train, y_test = y[:split_index], y[split_index:]
 
@@ -84,11 +84,28 @@ tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram
 model.fit(x=X_train, 
           y=y_train, 
           epochs=1, # change to 20
-          batch_size=64,
+          batch_size=256,
           validation_data=(X_test, y_test), 
           callbacks=[tensorboard_callback])
 
 test_loss, test_acc = model.evaluate(X_test, y_test, batch_size=256)
+
+
+y_pred_train = model.predict(X_train)
+y_pred_train = np.argmax(y_pred_train, axis=1)
+
+# Calculate the confusion matrix
+cm_train = tf.math.confusion_matrix(np.argmax(y_train, axis=1), y_pred_train)
+
+# Plot the confusion matrix
+plt.figure(figsize=(8, 6))
+sns.heatmap(cm_train, annot=True, fmt='g', cmap='Blues')
+plt.xlabel('Predicted labels')
+plt.ylabel('True labels')
+plt.show()
+
+
+
 print('Test accuracy:', test_acc)
 
 y_pred = model.predict(X_test)

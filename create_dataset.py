@@ -7,7 +7,7 @@ path = '/home/faren/Documents/HB/Dataset/mit-bih-arrhythmia-database-1.0.0'
 dest = '/home/faren/Documents/HB/Beats/'
 seg_len = 300
 lead = 'MLII'
-valid_labels= ["N", "S", "V", "F", "Q"]
+valid_labels= ["N", "n", "E", "F", "Q"]
 
 for file in glob.iglob(path + '/*.dat'):
     record = Recording()
