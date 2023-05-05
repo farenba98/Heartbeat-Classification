@@ -12,6 +12,8 @@ import itertools
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+import tensorflow_model_optimization.sparsity.keras as sp_keras
+
 valid_labels= ["N", "V", "F"]
 
 dest = '/home/faren/Documents/HB/Beats/'
@@ -74,9 +76,32 @@ model.compile(optimizer=adam, loss='categorical_crossentropy', metrics=['accurac
 log_dir = "logs/fit/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
 tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
 
-# split_index = int(0.9 * len(X))
-# X_train, X_test = X[:split_index], X[split_index:]
-# y_train, y_test = y[:split_index], y[split_index:]
+split_index = int(0.9 * len(X))
+X_train, X_test = X[:split_index], X[split_index:]
+y_train, y_test = y[:split_index], y[split_index:]
+
+# Prune the model
+pruning_params = {
+  'pruning_schedule': sp_keras.PolynomialDecay(
+      initial_sparsity=0.50, final_sparsity=0.80,
+      begin_step=2000, end_step=4000)
+}
+
+model_for_pruning = sp_keras.prune_low_magnitude(model, **pruning_params)
+
+# Compile the pruned model
+model_for_pruning.compile(optimizer='adam',
+              loss='sparse_categorical_crossentropy',
+              metrics=['accuracy'])
+
+
+# # Train the pruned model
+# model_for_pruning.fit(X_train, y_train, epochs=20,
+#                       callbacks=[sp_keras.UpdatePruningStep()])
+
+# # Evaluate the pruned model
+# test_loss, test_acc = model_for_pruning.evaluate(X_test, y_test)
+# print('Test accuracy:', test_acc)
 
 kfold = 10
 fold_size = len(X) // kfold
