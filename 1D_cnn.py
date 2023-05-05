@@ -102,14 +102,14 @@ for fold in range(kfold):
 
     history = model.fit(x=X_train, 
             y=y_train, 
-            epochs=50,
-            batch_size=64,
+            epochs=20,
+            batch_size=256,
             validation_data=(X_test, y_test),
             callbacks=[tensorboard_callback])
     
     histories.append(history)
 
-    test_loss, test_acc = model.evaluate(X_test, y_test, batch_size=64)
+    test_loss, test_acc = model.evaluate(X_test, y_test, batch_size=256)
 
     y_pred_train = model.predict(X_train)
     y_pred_train = np.argmax(y_pred_train, axis=1)
